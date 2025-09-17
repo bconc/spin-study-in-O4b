@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OUTDIR="zenodo_downloads"
+OUTDIR="input"
 mkdir -p "$OUTDIR"
 
 FILES=(
