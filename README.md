@@ -27,17 +27,24 @@ If you want to rerun any of our analyses, you’ll need to download this input/o
 ### Step 4. Perform hierarchical Bayesian inference
 To infer the hyperparameter posteriors of the model in Eq. 4 in https://arxiv.org/pdf/2509.04637. 
 The model is mixutre of a Normal distribution, representing the bulk of the population at primary mass $m<\tilde{m}$, 
-and a higher mass spin distribution described via a non-parametric Gaussian process prior.
+and a higher mass spin distribution described via a non-parametric Gaussian process prior: 
 
 $ python run_Xeff_N_GP.py 
+this will generate the output "Xeff_N_GP.cdf".
 
 For the model in Eq. 6 of  https://arxiv.org/pdf/2509.04637, i.e., a mixture between a Normal and a uniform type the command:
 
 $ python run_Xeff_N_uniform.py 
+this will generate the output "Xeff_N_uniform_independent.cdf".
 
 for the model in Eq. 5, use
 
 $ python run_mixture_gp.py
+this will generate the output "Xeff_mixture_O4.cdf".
+
+### Step 5. Analyze posterior distributions
+Output files are an ArviZ NetCDF file containing posterior samples, diagnostics, and metadata from the NumPyro MCMC run of the specific model.
+They stores the inferred parameter distributions for the population model together with sampler statistics.
 
 
 
