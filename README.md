@@ -1,7 +1,7 @@
 This repository holds code and data release products behind the paper "Gravitational waves reveal the pair-instability mass
 gap and constrain nuclear burning in massive stars", https://arxiv.org/pdf/2509.04637. The analysis takes roughly one day to complete on a standard PC, but can be significantly sped up using GPU acceleration when available.
 
-The provided packages are largely based on the code found at this link: https://github.com/tcallister/gwtc3-spin-studies.
+The provided packages are largely based on a code written by Thomas Callister, which can be found at this link: https://github.com/tcallister/gwtc3-spin-studies.
 
 ## Setting up the environment
 To reproduce our results and figures, you can use the provided "environment.yaml" file to create a conda environment with all required packages.
