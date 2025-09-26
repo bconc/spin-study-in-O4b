@@ -13,7 +13,7 @@ If you don’t already have conda installed, you can install [Miniconda](https:/
 $ conda env create -f environment.yaml
 
 ### Step 2. Activate the environment
-$ conda activate gwtc3-spin-studies
+$ conda activate gwtc4-spin-studies
 
 You can deactivate the environment using:
 $ conda deactivate
