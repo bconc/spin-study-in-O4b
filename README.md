@@ -44,7 +44,7 @@ this will generate the output "Xeff_mixture_O4.cdf".
 
 ### Step 5. Analyze posterior distributions
 Output files are an ArviZ NetCDF file containing posterior samples, diagnostics, and metadata from the NumPyro MCMC run of the specific model.
-They stores the inferred parameter distributions for the population model together with sampler statistics.
+They store the inferred parameter distributions for the population model together with sampler statistics.
 
 The notebook analysis.ipynb provides baseline code to visualize posterior distributions and to compute the differential merger rate as a function of primary masse for the low- and high-spin populations.
 
