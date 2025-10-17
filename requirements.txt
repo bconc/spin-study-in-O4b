@@ -26,7 +26,7 @@ pykerr==0.1.0
 pyparsing==3.2.5
 pytz==2025.2
 safe-netrc==1.0.1
-scipy==1.16.2
+scipy==1.15.3
 scitokens==1.8.1
 setuptools==78.1.1
 tzdata==2025.2
