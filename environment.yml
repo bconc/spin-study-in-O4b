@@ -1,22 +1,22 @@
-name: gwtc4-spin-studies
+name: gwtc4-spin-studies-og
 channels:
   - defaults
 dependencies:
-  - ca-certificates=2022.3.18
-  - certifi=2021.10.8
+  - ca-certificates
+  - certifi
   - libcxx
-  - libffi=3.3
-  - ncurses=6.3
-  - openssl=1.1.1n
-  - pip=21.2.4
-  - python=3.8.12
-  - readline=8.1.2
-  - setuptools=58.0.4
-  - sqlite=3.37.2
-  - tk=8.6.11
-  - wheel=0.37.1
-  - xz=5.2.5
-  - zlib=1.2.11
+  - libffi
+  - ncurses
+  - openssl
+  - pip
+  - python>=3.11.0
+  - readline
+  - setuptools
+  - sqlite
+  - tk
+  - wheel
+  - xz
+  - zlib
   - pip:
     - absl-py==1.0.0
     - alabaster==0.7.12

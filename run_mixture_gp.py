@@ -33,5 +33,5 @@ mcmc.print_summary()
  
 # Save out data
 data = az.from_numpyro(mcmc)
-az.to_netcdf(data,"Xeff_mixture_O4.cdf")
+az.to_netcdf(data, "output/Xeff_mixture_O4b.cdf")
 

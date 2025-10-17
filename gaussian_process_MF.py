@@ -103,7 +103,7 @@ def Xeff_gaussian_to_uniform_gp2(sampleDict,injectionDict):
     Lm = jscp.linalg.cholesky(covm+1e-9*jnp.eye(logm_grid.size),lower=True)
     gp_m1_draws = numpyro.sample("gp_m1_draws", dist.Normal(0, 1), sample_shape=(logm_grid.size,)) 
     p_m1_grid= jnp.exp(Lm.dot(gp_m1_draws))  #  ensures positivity
-    p_m1_grid  /= jnp.trapz(p_m1_grid, logm_grid)  # Normalize
+    p_m1_grid  /= jnp.trapezoid(p_m1_grid, logm_grid)  # Normalize
     numpyro.deterministic("p_m1_grid", p_m1_grid)
 
     # Normalization

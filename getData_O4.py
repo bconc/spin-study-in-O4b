@@ -88,6 +88,9 @@ def getSamples(sample_limit=2000, bbh_only=True, O4=False, min_mass=3, max_mass=
         O4_sampleFile = os.path.join(dirname,"./input/sampleDict_O4a_cat_4c4fd2cef_717_date_250401.npy")
         O4_sampleDict = np.load(O4_sampleFile,allow_pickle=True)[()]
 
+        O4b_sampleFile = os.path.join(dirname, "./input/sampleDict_O4b_bbh_FAR1_data_v2.npy")
+        O4b_sampleDict = np.load(O4b_sampleFile, allow_pickle=True)[()]
+
         out_of_sample = ['GW230529_181500']#, 'GW231123_135430']
         for event in out_of_sample:
             print('Removing',event)
@@ -98,10 +101,22 @@ def getSamples(sample_limit=2000, bbh_only=True, O4=False, min_mass=3, max_mass=
         for k,v in O4_sampleDict.items():
             sampleDict[k] = v
 
+        j = 0
+        for k,v in O4b_sampleDict.items():
+            if j==0:
+                print('O4b included')
+            sampleDict[k] = v.item()
+            j+=1
+
+
     # Loop across events
     for event in sampleDict:
 
         # Uniform draw weights, trimming mass range as necessary
+        # try:
+        #     print('sampleDict', type(sampleDict[event]), sampleDict[event]['m1'])
+        # except IndexError:
+        #     print('sampleDict what', type(sampleDict[event]), sampleDict[event])
         draw_weights = np.ones(sampleDict[event]['m1'].size)/sampleDict[event]['m1'].size
         draw_weights[sampleDict[event]['m2']<min_mass] = 0
         if max_mass:

@@ -8,7 +8,7 @@ import numpy as np
 from utilities import *
 from jax.scipy.special import erf
 
-#original example, where the mixture fraction is represented as a GP
+# original example, where the mixture fraction is represented as a GP
 # useful to get the mixture fraction as a function of m_1 for our simple model
 logm_grid = jnp.linspace(0,2.3,100)
 Xeff_grid = jnp.linspace(-1,1,100)
@@ -122,6 +122,7 @@ def Xeff_and_m1_gp_HN_prior(sampleDict,injectionDict):
     R_pop_det = R20*p_m1_det*p_m2_det*p_z_det*p_Xeff_det
 
     # Form ratio of proposed weights over draw weights
+    # Beth look here:
     obs_time_in_years = injectionDict['time']/(365.25*24*3600)
     inj_weights = injectionDict['mixture_weights']*R_pop_det/(p_draw/obs_time_in_years)
 
@@ -165,12 +166,12 @@ def Xeff_and_m1_gp_HN_prior(sampleDict,injectionDict):
     
     # Map the log-likelihood function over each event in our catalog
     log_ps,n_effs = vmap(logp)(
-                        jnp.array([sampleDict[k]['m1'] for k in sampleDict]),
-                        jnp.array([sampleDict[k]['m2'] for k in sampleDict]),
-                        jnp.array([sampleDict[k]['z'] for k in sampleDict]),
-                        jnp.array([sampleDict[k]['dVc_dz'] for k in sampleDict]),
-                        jnp.array([sampleDict[k]['Xeff'] for k in sampleDict]),
-                        jnp.array([sampleDict[k]['z_prior']*sampleDict[k]['Xeff_priors'] for k in sampleDict]))
+        jnp.array([sampleDict[k]['m1'] for k in sampleDict]),
+        jnp.array([sampleDict[k]['m2'] for k in sampleDict]),
+        jnp.array([sampleDict[k]['z'] for k in sampleDict]),
+        jnp.array([sampleDict[k]['dVc_dz'] for k in sampleDict]),
+        jnp.array([sampleDict[k]['Xeff'] for k in sampleDict]),
+        jnp.array([sampleDict[k]['z_prior']*sampleDict[k]['Xeff_priors'] for k in sampleDict]))
         
     # As a diagnostic, save minimum number of effective samples across all events
     min_log_neff=numpyro.deterministic('min_log_neff',jnp.min(jnp.log10(n_effs)))
@@ -210,18 +211,17 @@ def Xeff_independent_bounds_mGP(sampleDict, injectionDict, independentBounds=Tru
     max_chi_eff = sampleUniformFromLogit("max_chi_eff", 0.05, 1.)
     mCut = sampleUniformFromLogit("mCut", 30., 60.)
 
-
     C=numpyro.sample("C",dist.HalfNormal(3))    # 
     lnD=numpyro.sample("lnD",dist.Normal(0,1)) #
     D=numpyro.deterministic("D",jnp.exp(lnD))
     numpyro.factor("regularise_m1", -(C/jnp.sqrt(D))**2/(2.*(m_regularization_std*3)**2)) #
     
-    #GP for mass
+    # GP for mass
     cov =(C**2)*jnp.exp(-(logm_grid[:,jnp.newaxis]-logm_grid[jnp.newaxis,:])**2/(2*(D**2)))
     L = jscp.linalg.cholesky(cov+1e-7*jnp.eye(logm_grid.size),lower=True)
     gp_m1_draws = numpyro.sample("gp_m1_draws", dist.Normal(0, 1), sample_shape=(logm_grid.size,)) 
     p_m1_grid= jnp.exp(L.dot(gp_m1_draws))  #  ensures positivity
-    p_m1_grid  /= jnp.trapz(p_m1_grid, logm_grid)  # Normalize
+    p_m1_grid  /= jnp.trapezoid(p_m1_grid, logm_grid)  # Normalize
     numpyro.deterministic("p_m1_grid", p_m1_grid)
 
     if independentBounds:
@@ -234,7 +234,7 @@ def Xeff_independent_bounds_mGP(sampleDict, injectionDict, independentBounds=Tru
     #logsig_p = sampleUniformFromLogit("logsig_p",  -1.5,  0)
 
     # Normalization
-#    p_m1_norm = massModel(20., alpha, mu_m1, sig_m1, 10.**log_f_peak, mMax, mMin, 10.**log_dmMax, 10.**log_dmMin)
+    # p_m1_norm = massModel(20., alpha, mu_m1, sig_m1, 10.**log_f_peak, mMax, mMin, 10.**log_dmMax, 10.**log_dmMin)
     p_z_norm = (1.+0.2)**kappa
     p_m_norm = jnp.interp(jnp.log10(20.), logm_grid, p_m1_grid)
 
@@ -244,7 +244,7 @@ def Xeff_independent_bounds_mGP(sampleDict, injectionDict, independentBounds=Tru
     m2_det = injectionDict['m2']
     z_det = injectionDict['z']
     dVdz_det = injectionDict['dVdz']
-    p_draw = injectionDict['p_m1_m2_z_Xeff']#injectionDict['p_draw_m1m2z']*injectionDict['p_draw_chiEff']
+    p_draw = injectionDict['p_m1_m2_z_Xeff'] #injectionDict['p_draw_m1m2z']*injectionDict['p_draw_chiEff']
 
     # Compute proposed population weights
     mixture_fraction = 1./(1.+jnp.exp(-(m1_det-mCut)/1.))
@@ -252,14 +252,15 @@ def Xeff_independent_bounds_mGP(sampleDict, injectionDict, independentBounds=Tru
     p_Xeff_det_high = smoothlyTruncatedUniform(Xeff_det, max_chi_eff, min_chi_eff, 0.05)
     p_Xeff_det = p_Xeff_det_high*mixture_fraction + p_Xeff_det_low*(1.-mixture_fraction)
 
-#    p_m1_det = massModel(m1_det, alpha, mu_m1, sig_m1, 10.**log_f_peak, mMax, mMin, 10.**log_dmMax, 10.**log_dmMin)/p_m1_norm
+    # p_m1_det = massModel(m1_det, alpha, mu_m1, sig_m1, 10.**log_f_peak, mMax, mMin, 10.**log_dmMax, 10.**log_dmMin)/p_m1_norm
     p_m1_det = jnp.interp(jnp.log10(m1_det), logm_grid, p_m1_grid)/p_m_norm
     p_m2_det = (1.+bq)*m2_det**bq/(m1_det**(1.+bq)-tmp_min**(1.+bq))
     p_z_det = dVdz_det*(1.+z_det)**(kappa-1.)/p_z_norm
     R_pop_det = R20*p_m1_det*p_m2_det*p_z_det*p_Xeff_det
 
-#    # Form ratio of proposed weights over draw weights
-#    inj_weights = R_pop_det/(p_draw)
+    # Beth look here first
+    # Form ratio of proposed weights over draw weights
+    # inj_weights = R_pop_det/(p_draw)
     obs_time_in_years = injectionDict['time']/(365.25*24*3600)
     inj_weights = injectionDict['mixture_weights']*R_pop_det/(p_draw/obs_time_in_years)
 
@@ -284,7 +285,7 @@ def Xeff_independent_bounds_mGP(sampleDict, injectionDict, independentBounds=Tru
         p_Xeff = p_Xeff_high*mixture_fraction + p_Xeff_low*(1.-mixture_fraction)
 
         # Compute proposed population weights
-#        p_m1 = massModel(m1_sample, alpha, mu_m1, sig_m1, 10.**log_f_peak, mMax, mMin, 10.**log_dmMax, 10.**log_dmMin)/p_m1_norm
+        # p_m1 = massModel(m1_sample, alpha, mu_m1, sig_m1, 10.**log_f_peak, mMax, mMin, 10.**log_dmMax, 10.**log_dmMin)/p_m1_norm
         p_m2 = (1.+bq)*m2_sample**bq/(m1_sample**(1.+bq)-tmp_min**(1.+bq))
         p_m1 =jnp.interp(jnp.log10(m1_sample), logm_grid, p_m1_grid)/p_m_norm
 
