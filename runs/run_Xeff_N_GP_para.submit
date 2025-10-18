@@ -1,6 +1,6 @@
 # submit file to HTCondor
 universe                = vanilla
-executable              = run_Xeff_N_GP_para_wrap.sh
+executable              = runs/run_Xeff_N_GP_para_wrap.sh
 
 output                  = logs/Xeff_N_para_GP_v2.out
 error                   = logs/Xeff_N_para_GP_v2.err
