@@ -4,7 +4,7 @@ import numpyro
 import jax
 nChains = 10
 numpyro.set_host_device_count(nChains)
-numpyro.set_platform(platform='gpu')
+numpyro.set_platform(platform='cpu')
 from numpyro.infer import NUTS, MCMC
 #from jax.config import config
 jax.config.update("jax_enable_x64", True)

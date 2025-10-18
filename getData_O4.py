@@ -22,7 +22,7 @@ def getInjections(O4=False, sample_limit=False, min_mass=3, max_mass=None):
 
     # Load injections
     if O4:
-        injectionFile = os.path.join(dirname,"./input/injectionDict_O1O2O3O4a_FAR_1_in_1_semianalytic_SNR_10.pickle")
+        injectionFile = os.path.join(dirname,"./input/injectionDict_O1-O4b_FAR_1_in_1.pickle")
         injectionDict = np.load(injectionFile,allow_pickle=True)
     else:
         injectionFile = os.path.join(dirname,"./input/injectionDict_O1O2O3_FAR_1_in_1_semianalytic_SNR_10.pickle")
